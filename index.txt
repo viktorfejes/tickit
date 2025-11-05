@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Local Time Tracker</title>
+    <style>
+        :root {
+            --bg: #121212;
+            --bg-panel: #1e1e1e;
+            --text: #e0e0e0;
+            --text-dim: #aaa;
+            --accent: #8bc34a;
+            --border: #2a2a2a;
+            --danger: #e57373;
+        }
+
+        body.light {
+            --bg: #fafafa;
+            --bg-panel: #ffffff;
+            --text: #222;
+            --text-dim: #555;
+            --accent: #4caf50;
+            --border: #ddd;
+            --danger: #d32f2f;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 2rem auto;
+            max-width: 700px;
+            line-height: 1.5;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        h1 {
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #themeToggle {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        #themeToggle:hover {
+            color: var(--accent);
+        }
+
+        .task {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-panel);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .task.active {
+            background: rgba(139, 195, 74, 0.1);
+            border-color: var(--accent);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .task-header strong {
+            flex: 1;
+            user-select: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .task-controls {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .task-time {
+            font-weight: 500;
+            min-width: 80px;
+            text-align: right;
+            color: var(--accent);
+        }
+
+        .task-notes {
+            display: none;
+            margin-top: 0.4rem;
+        }
+
+        .task-notes textarea {
+            width: 100%;
+            overflow: hidden;
+            resize: none;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9em;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 0;
+            min-height: 1em;
+        }
+
+        .task-notes textarea:focus {
+            outline: none;
+        }
+
+        .task-meta {
+            display: none;
+            font-size: 0.8em;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        .task.expanded .task-notes,
+        .task.expanded .task-meta {
+            display: block;
+        }
+
+        button {
+            margin: 0;
+            font-size: 0.85em;
+            background: #2b2b2b;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        body.light button {
+            background: #eee;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        button.danger {
+            background: transparent;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        button.danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        #summary {
+            white-space: pre-wrap;
+            background: var(--bg-panel);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: monospace;
+            border: 1px solid var(--border);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 0.25rem;
+            background: #2b2b2b;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.4rem;
+        }
+
+        body.light input,
+        body.light textarea {
+            background: #fff;
+            color: #000;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: 1px solid var(--accent);
+        }
+
+        #controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: #000;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+        }
+
+        #toast.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>
+        Daily Time Tracker
+        <button id="themeToggle" title="Toggle light/dark">🌙</button>
+    </h1>
+
+    <div id="taskList"></div>
+
+    <h3>Add Task</h3>
+    <input id="titleInput" placeholder="Task title or ticket #" />
+    <textarea id="notesInput" placeholder="Optional notes"></textarea>
+
+    <div id="controls">
+        <button id="addBtn">Add Task</button>
+        <button id="summaryBtn">Generate Summary</button>
+        <button id="copyBtn">Copy Summary 📋</button>
+        <button id="resetBtn" class="danger">Reset All</button>
+    </div>
+
+    <div id="summary"></div>
+    <div id="toast"></div>
+
+    <script>
+        const LOG_KEY = "timeTrackerLog";
+        const THEME_KEY = "timeTrackerTheme";
+
+        function loadLog() {
+            const raw = localStorage.getItem(LOG_KEY);
+            const today = new Date().toISOString().slice(0, 10);
+            if (!raw) return {date: today, tasks: []};
+            const parsed = JSON.parse(raw);
+            if (parsed.date !== today) return {date: today, tasks: []};
+            return parsed;
+        }
+
+        function saveLog() {
+            localStorage.setItem(LOG_KEY, JSON.stringify(log));
+        }
+
+        function formatDuration(ms) {
+            const totalSec = Math.floor(ms / 1000);
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            return `${h}h ${m}m ${s}s`;
+        }
+
+        function formatSummaryDuration(ms) {
+            const rounded = roundToQuarterHour(ms);
+            const totalMin = Math.floor(rounded / (60 * 1000));
+            const h = Math.floor(totalMin / 60);
+            const m = totalMin % 60;
+            if (h > 0 && m > 0) return `${h}h ${m}m`;
+            if (h > 0) return `${h}h`;
+            return `${m}m`;
+        }
+
+        function roundToQuarterHour(ms) {
+            const mins = Math.ceil(ms / (15 * 60 * 1000)) * 15;
+            return mins * 60 * 1000;
+        }
+
+        function autoResize(el) {
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+        }
+
+        function render() {
+            const list = document.getElementById("taskList");
+            list.innerHTML = "";
+
+            log.tasks.forEach((t, i) => {
+                const total = t.active
+                    ? (t.duration || 0) + (Date.now() - t.start)
+                    : (t.duration || 0);
+
+                const taskDiv = document.createElement("div");
+                taskDiv.className = "task" + (t.active ? " active" : "");
+                if (t.expanded) taskDiv.classList.add("expanded");
+
+                const header = document.createElement("div");
+                header.className = "task-header";
+                header.onclick = () => toggleNotes(i);
+
+                const titleEl = document.createElement("strong");
+                titleEl.textContent = t.title;
+                titleEl.title = t.title;
+                header.appendChild(titleEl);
+
+                const controls = document.createElement("div");
+                controls.className = "task-controls";
+                const timeEl = document.createElement("span");
+                timeEl.className = "task-time";
+                timeEl.textContent = formatDuration(total);
+                controls.appendChild(timeEl);
+
+                const startStopBtn = document.createElement("button");
+                startStopBtn.textContent = t.active ? "Stop" : "Start";
+                startStopBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    t.active ? stopTask(i) : startTask(i);
+                };
+                controls.appendChild(startStopBtn);
+
+                const delBtn = document.createElement("button");
+                delBtn.textContent = "Del";
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteTask(i);
+                };
+                controls.appendChild(delBtn);
+
+                header.appendChild(controls);
+                taskDiv.appendChild(header);
+
+                // Editable notes
+                const notesContainer = document.createElement("div");
+                notesContainer.className = "task-notes";
+                const notesArea = document.createElement("textarea");
+                notesArea.value = t.notes || "";
+                notesArea.oninput = () => {
+                    autoResize(notesArea);
+                    t.notes = notesArea.value;
+                    saveLog();
+                };
+                notesContainer.appendChild(notesArea);
+                taskDiv.appendChild(notesContainer);
+
+                const meta = document.createElement("div");
+                meta.className = "task-meta";
+                const createdDate = new Date(t.created || Date.now());
+                const timeString = createdDate.toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'});
+                meta.textContent = `Added: ${timeString}`;
+                taskDiv.appendChild(meta);
+
+                list.appendChild(taskDiv);
+            });
+
+            saveLog();
+
+            // ✅ after DOM rebuild, restore note heights for all expanded tasks
+            requestAnimationFrame(() => {
+                const textareas = list.querySelectorAll(".task.expanded .task-notes textarea");
+                textareas.forEach(autoResize);
+            });
+        }
+
+        function toggleNotes(i) {
+            log.tasks[i].expanded = !log.tasks[i].expanded;
+            saveLog();
+            render();
+
+            // ✅ after re-render, reapply correct height for expanded task
+            requestAnimationFrame(() => {
+                const list = document.getElementById("taskList");
+                const taskDiv = list.children[i];
+                if (!taskDiv) return;
+                const textarea = taskDiv.querySelector(".task-notes textarea");
+                if (textarea && log.tasks[i].expanded) {
+                    autoResize(textarea);
+                }
+            });
+        }
+
+        function addTask() {
+            const title = document.getElementById("titleInput").value.trim();
+            if (!title) return;
+            const notes = document.getElementById("notesInput").value.trim();
+            log.tasks.push({
+                title,
+                notes,
+                duration: 0,
+                active: false,
+                expanded: false,
+                created: Date.now()
+            });
+            document.getElementById("titleInput").value = "";
+            document.getElementById("notesInput").value = "";
+            render();
+        }
+
+        function startTask(i) {
+            log.tasks.forEach((t, idx) => {if (t.active) stopTask(idx);});
+            log.tasks[i].active = true;
+            log.tasks[i].start = Date.now();
+            saveLog();
+            render(); // full rebuild once
+        }
+
+        function stopTask(i) {
+            const t = log.tasks[i];
+            if (!t.active) return;
+            t.active = false;
+            t.duration = (t.duration || 0) + (Date.now() - t.start);
+            delete t.start;
+            saveLog();
+            render(); // full rebuild once
+        }
+
+        function deleteTask(i) {
+            log.tasks.splice(i, 1);
+            render();
+        }
+
+        function generateSummary() {
+            let total = 0;
+            let text = `— Daily Work Summary (${log.date}) —\n\n`;
+            log.tasks.forEach(t => {
+                let dur = t.active
+                    ? (t.duration || 0) + (Date.now() - t.start)
+                    : (t.duration || 0);
+                total += dur;
+                const notes = t.notes ? `\n${t.notes}` : "";
+                text += `${t.title} — ${formatSummaryDuration(dur)}${notes}\n\n`;
+            });
+            total = roundToQuarterHour(total);
+            text += `Total: ${formatSummaryDuration(total)}`;
+            document.getElementById("summary").textContent = text;
+            return text;
+        }
+
+        function copySummary(textOverride) {
+            const summaryText = (textOverride || document.getElementById("summary").textContent).trim();
+            if (!summaryText) return showToast("No summary to copy.");
+            navigator.clipboard.writeText(summaryText)
+                .then(() => showToast("Summary copied!"))
+                .catch(() => showToast("Copy failed."));
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 2000);
+        }
+
+        function resetAll() {
+            if (!log.tasks.length) return showToast("No tasks to clear.");
+            if (confirm("Copy summary and delete all tasks?")) {
+                const text = generateSummary();
+                copySummary(text);
+                log.tasks = [];
+                saveLog();
+                render();
+                document.getElementById("summary").textContent = "";
+                showToast("Summary copied & all tasks cleared");
+            }
+        }
+
+        function loadTheme() {
+            const stored = localStorage.getItem(THEME_KEY);
+            if (stored === "light") document.body.classList.add("light");
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("light");
+            const isLight = document.body.classList.contains("light");
+            localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const btn = document.getElementById("themeToggle");
+            btn.textContent = document.body.classList.contains("light") ? "☀️" : "🌙";
+        }
+
+        let log = loadLog();
+        loadTheme();
+        render();
+
+        // Instead of re-rendering every second, only update live timers
+        setInterval(() => {
+            const list = document.getElementById("taskList");
+            const active = log.tasks.findIndex(t => t.active);
+            if (active >= 0 && list.children[active]) {
+                const task = log.tasks[active];
+                const timeEl = list.children[active].querySelector(".task-time");
+                if (timeEl && task.start) {
+                    const total = (task.duration || 0) + (Date.now() - task.start);
+                    timeEl.textContent = formatDuration(total);
+                }
+            }
+        }, 1000);
+
+        document.getElementById("addBtn").onclick = addTask;
+        document.getElementById("summaryBtn").onclick = generateSummary;
+        document.getElementById("copyBtn").onclick = () => copySummary();
+        document.getElementById("resetBtn").onclick = resetAll;
+        document.getElementById("themeToggle").onclick = toggleTheme;
+    </script>
+</body>
+
+</html>

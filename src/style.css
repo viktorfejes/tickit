@@ -1,0 +1,432 @@
+/* CSS RESET */
+*,
+::after,
+::before {
+    box-sizing: border-box
+}
+
+* {
+    margin: 0
+}
+
+body,
+html {
+    height: 100%
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased
+}
+
+canvas,
+img,
+picture,
+svg,
+video {
+    display: block;
+    max-width: 100%
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    overflow-wrap: break-word
+}
+
+:root {
+    --bg: #fafafa;
+    --bg-darker: #e5e5e5;
+    --color: #171717;
+    --btn-bg: #0a0a0a;
+    --btn-color: #f5f5f5;
+    --btn-reset-bg: #fecaca;
+    --btn-reset-color: #7f1d1d;
+    --cat-border: transparent;
+    --cat-bg: #fafafa;
+    --input-bg: #fafafa;
+    --input-border: #d4d4d4;
+    --input-color: #171717;
+    --input-focus-border: #737373;
+    --task-border-color: #e5e5e5;
+    --task-active-border: #16a34a;
+    --task-control-icon-bg: #e5e5e5;
+    --task-control-icon-color: #262626;
+    --task-control-icon-stop-bg: #16a34a;
+    --task-control-icon-stop-color: #dcfce7;
+    --summary-bg: #f5f5f5;
+    --copy-btn-border: #e5e5e5;
+    --copy-color: #525252;
+    --copy-color-hover: #171717;
+    --toast-bg: #fafafa;
+    --toast-color: #171717;
+    --exp-icon-color: #d4d4d4;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    transition: background 0.3s, color 0.3s;
+    color: var(--color);
+}
+
+body.dark {
+    --bg: #0a0a0a;
+    --bg-darker: #171717;
+    --color: #e5e5e5;
+    --btn-bg: #e5e5e5;
+    --btn-color: #262626;
+    --btn-reset-bg: #7f1d1d;
+    --btn-reset-color: #fecaca;
+    --cat-border: #404040;
+    --cat-bg: #262626;
+    --input-bg: #0a0a0a;
+    --input-border: #171717;
+    --input-color: #e5e5e5;
+    --input-focus-border: #737373;
+    --task-border-color: #262626;
+    --task-active-border: #22c55e;
+    --task-control-icon-bg: #171717;
+    --task-control-icon-color: #a3a3a3;
+    --task-control-icon-stop-bg: #4ade80;
+    --task-control-icon-stop-color: #052e16;
+    --summary-bg: #171717;
+    --copy-btn-border: #404040;
+    --copy-color: #737373;
+    --copy-color-hover: #d4d4d4;
+    --toast-bg: #262626;
+    --toast-color: #e5e5e5;
+    --exp-icon-color: #404040;
+}
+
+.container {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4rem;
+}
+
+.ver {
+    font-size: 1rem;
+    font-weight: normal;
+    opacity: 0.25;
+}
+
+.theme-toggle {
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color);
+}
+
+.task-add-input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    outline-style: none;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+    margin-bottom: 1rem;
+    color: var(--input-color);
+    transition: all .3s;
+}
+
+.task-add-input:focus-visible {
+    border-color: var(--input-focus-border);
+    box-shadow: oklab(0.708 -2.98023e-7 1.19209e-7 / 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+}
+
+.category-wrapper {
+    width: fit-content;
+    background: var(--bg-darker);
+    border-radius: 0.625rem;
+    padding: 0.1875rem;
+    margin-bottom: 2rem;
+    transition: all .3s;
+}
+
+.category-wrapper input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.category-wrapper label {
+    display: inline-block;
+    cursor: pointer;
+    user-select: none;
+    background: var(--bg-darker);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid transparent;
+    transition: all .3s;
+}
+
+input[type="radio"]:checked+label {
+    background: var(--cat-bg);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+    border: 1px solid var(--cat-border);
+}
+
+.new-task-area {
+    border-radius: 0.625rem;
+    padding: 2rem;
+    border: 1px solid var(--task-border-color);
+    margin-bottom: 4rem;
+    transition: all .3s;
+}
+
+.new-task-area h2 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.new-task-area p {
+    opacity: 0.6;
+    max-width: 44ch;
+    margin-bottom: 2rem;
+}
+
+.task-form-label {
+    display: block;
+    margin-bottom: .5rem;
+}
+
+.tasks {
+    margin-bottom: 4rem;
+}
+
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.task {
+    border: 1px solid var(--task-border-color);
+    border-radius: 0.625rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    transition: all .3s;
+}
+
+.task.active {
+    box-shadow: 0 0 0 3px var(--task-active-border);
+}
+
+.task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.task-header-right {
+    display: flex;
+    gap: 1rem;
+}
+
+.task-header label {
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.task-title-exp-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--exp-icon-color);
+}
+
+.task-title-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    flex: 1;
+}
+
+.task-header .task-time {
+    user-select: none;
+    white-space: nowrap;
+}
+
+.task-header .task-controls {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.task-controls-timer-btn,
+.task-controls-del-btn {
+    background: var(--task-control-icon-bg);
+    color: var(--task-control-icon-color);
+    border: 0;
+    border-radius: 0.375rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0.2rem;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.task-controls-timer-btn.stop {
+    background: var(--task-control-icon-stop-bg);
+    color: var(--task-control-icon-stop-color);
+}
+
+.task-checkbox {
+    display: none;
+}
+
+.task-notes {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-checkbox:checked+.task-notes {
+    max-height: 1000px;
+}
+
+.task-notes-editable {
+    padding-top: 1rem;
+    white-space: pre-wrap;
+    display: inline-block;
+    width: 100%;
+    outline: 0;
+}
+
+.task-notes-editable:empty::before {
+    content: "Click here to add notes...";
+    pointer-events: none;
+}
+
+.task-meta {
+    font-size: 0.825rem;
+    margin-top: 0.825rem;
+    opacity: 0.5;
+}
+
+/* .tasks:has(.task-list:empty) { */
+/*     display: none; */
+/* } */
+
+.tasks:has(.task-list:empty)+.add-controls {
+    display: none;
+}
+
+.btn {
+    background: var(--btn-bg);
+    color: var(--btn-color);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.add-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn.reset {
+    background: var(--btn-reset-bg);
+    color: var(--btn-reset-color);
+}
+
+.summary-wrapper {
+    position: relative;
+    margin-top: 2rem;
+}
+
+.copy-btn {
+    position: absolute;
+    font-size: small;
+    background: transparent;
+    border-radius: 0.5rem;
+    border: 1px solid var(--copy-btn-border);
+    color: var(--copy-color);
+    right: 0.5rem;
+    top: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    border: 1px solid var(--copy-btn-border);
+    color: var(--copy-color-hover);
+}
+
+.summary {
+    font-family: monospace;
+    white-space: pre-wrap;
+    padding: 0.75rem 1rem;
+    background: var(--summary-bg);
+    border-radius: 0.625rem;
+}
+
+.hidden {
+    display: none;
+}
+
+#toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: var(--toast-bg);
+    color: var(--toast-color);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.625rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(10px);
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+#toast.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.footer {
+    text-align: center;
+    opacity: 0.5;
+    padding: 2rem;
+    margin: 4rem 0 2rem 0;
+}
+
+.footer a {
+    color: currentColor;
+    text-decoration: none;
+}

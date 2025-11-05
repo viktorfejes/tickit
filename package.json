@@ -1,0 +1,16 @@
+{
+  "name": "tickit",
+  "version": "1.0.0",
+  "description": "Internal time tracker application used for tracking time spent on tickets.",
+  "license": "MIT",
+  "author": "Viktor Fejes",
+  "type": "commonjs",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
+    "inline-source": "^8.0.3"
+  }
+}
