@@ -5,6 +5,11 @@ import { minify } from "html-minifier-terser";
 
 const LICENSE = fs.readFileSync("LICENSE.txt", "utf8");
 
+const dist_dir = "dist";
+if (!fs.existsSync(distDir)){
+    fs.mkdirSync(dist_dir, { recursive: true });
+}
+
 async function build() {
     // Inline external CSS & JS into HTML
     const inlined = await inlineSource("src/index.html", {
