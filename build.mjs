@@ -3,7 +3,7 @@ import fs from "fs";
 import { inlineSource } from "inline-source";
 import { minify } from "html-minifier-terser";
 
-const LICENSE = fs.readFileSync("src/LICENSE.txt", "utf8");
+const LICENSE = fs.readFileSync("LICENSE.txt", "utf8");
 
 async function build() {
     // Inline external CSS & JS into HTML

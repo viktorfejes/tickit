@@ -59,6 +59,7 @@ p {
     --input-border: #d4d4d4;
     --input-color: #171717;
     --input-focus-border: #737373;
+    --task-background: #fafafa; 
     --task-border-color: #e5e5e5;
     --task-active-border: #16a34a;
     --task-control-icon-bg: #e5e5e5;
@@ -95,9 +96,10 @@ body.dark {
     --input-border: #171717;
     --input-color: #e5e5e5;
     --input-focus-border: #737373;
+    --task-background: #0a0a0a; 
     --task-border-color: #262626;
     --task-active-border: #22c55e;
-    --task-control-icon-bg: #171717;
+    --task-control-icon-bg: #262626;
     --task-control-icon-color: #a3a3a3;
     --task-control-icon-stop-bg: #4ade80;
     --task-control-icon-stop-color: #052e16;
@@ -229,6 +231,7 @@ input[type="radio"]:checked+label {
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
     transition: all .3s;
+    background: var(--task-background);
 }
 
 .task.active {

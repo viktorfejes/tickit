@@ -70,7 +70,7 @@ function fmt_duration(ms) {
     const h = Math.floor(totalSec / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
     const s = totalSec % 60;
-    return `${h}h ${m}m ${s}s`;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
 function fmt_summary_duration(ms, step_min) {
