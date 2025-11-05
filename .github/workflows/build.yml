@@ -1,0 +1,35 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Pull repo
+      - uses: actions/checkout@v4
+
+      # Set up node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install deps
+      - run: npm ci
+        continue-on-error: true
+
+      # Run build script
+      - run: node build.mjs
+
+      # Publish the dist folder to 'dist' branch
+      - name: Deploy dist branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: dist
+          publish_dir: ./dist
+          force_orphan: true
+
