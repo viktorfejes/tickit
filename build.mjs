@@ -6,7 +6,7 @@ import { minify } from "html-minifier-terser";
 const LICENSE = fs.readFileSync("LICENSE.txt", "utf8");
 
 const dist_dir = "dist";
-if (!fs.existsSync(distDir)){
+if (!fs.existsSync(dist_dir)){
     fs.mkdirSync(dist_dir, { recursive: true });
 }
 
