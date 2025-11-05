@@ -1,6 +1,7 @@
 // Settings
 const round_to_min = 10;
 // Globals
+const APP_VERSION = "__COMMIT_HASH__";
 const THEME_KEY = "tickitTheme";
 const TASKS_LOG_KEY = "tickitTaskLog";
 const TASK_CATEGORIES = {
@@ -386,6 +387,8 @@ function filter_tasks(cat) {
 
 // Startup
 document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector(".ver").textContent = "build " + APP_VERSION;
+
     load_theme();
     load_tasks();
 
