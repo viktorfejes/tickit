@@ -387,7 +387,7 @@ function filter_tasks(cat) {
 
 // Startup
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector(".ver").textContent = "build " + APP_VERSION;
+    document.querySelector(".ver").textContent = `Build ${APP_VERSION}`;
 
     load_theme();
     load_tasks();
