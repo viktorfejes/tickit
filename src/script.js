@@ -8,6 +8,7 @@ const TASK_CATEGORIES = {
     UNIVERSAL: 1,
     NETFLIX: 2,
     PARAMOUNT: 3,
+    SONY: 4,
     OTHER: 255
 };
 
