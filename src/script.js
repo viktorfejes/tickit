@@ -1,5 +1,5 @@
 // Settings
-const round_to_min = 10;
+let round_to_min = 10;
 // Globals
 const APP_VERSION = "__COMMIT_HASH__";
 const THEME_KEY = "tickitTheme";
