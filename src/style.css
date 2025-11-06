@@ -59,7 +59,7 @@ p {
     --input-border: #d4d4d4;
     --input-color: #171717;
     --input-focus-border: #737373;
-    --task-background: #fafafa; 
+    --task-background: #fafafa;
     --task-border-color: #e5e5e5;
     --task-active-border: #16a34a;
     --task-control-icon-bg: #e5e5e5;
@@ -96,7 +96,7 @@ body.dark {
     --input-border: #171717;
     --input-color: #e5e5e5;
     --input-focus-border: #737373;
-    --task-background: #0a0a0a; 
+    --task-background: #0a0a0a;
     --task-border-color: #262626;
     --task-active-border: #22c55e;
     --task-control-icon-bg: #262626;
@@ -207,6 +207,13 @@ input[type="radio"]:checked+label {
     opacity: 0.6;
     max-width: 44ch;
     margin-bottom: 2rem;
+}
+
+.auto-start-container {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .task-form-label {

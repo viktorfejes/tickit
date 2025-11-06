@@ -18,9 +18,11 @@
             <input id="taskNameInput" class="task-add-input" placeholder="e.g. 401422-255 | SUB1 r1 - UNI - DOM - WICKED FOR GOOD..." type="text" />
             <label for="category" class="task-form-label">Category</label>
             <div id="taskCategoryInputs" class="category-wrapper"></div>
-            <div id="controls">
-                <button id="addBtn" class="btn">Add Task</button>
+            <div class="auto-start-container">
+                <input type="checkbox" name="auto-start" id="auto-start">
+                <label for="auto-start" class="task-form-label">Start timer immediately after adding task</label>
             </div>
+            <button id="addBtn" class="btn">Add Task</button>
         </div>
         <div class="tasks">
             <div class="tasks-header">

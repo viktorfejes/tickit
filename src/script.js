@@ -29,6 +29,7 @@ const btn_summary = document.getElementById("summaryBtn");
 const summary_wrapper = document.getElementById("summaryWrapper");
 const summary_el = document.getElementById("summary");
 const btn_copy = document.getElementById("copyBtn");
+const auto_start_cb = document.getElementById("auto-start");
 
 function debounce(fn, delay) {
     let t;
@@ -120,9 +121,11 @@ function reset_tasks() {
 function render_tasks() {
     task_list.innerHTML = "";
 
-    tasks.forEach((t, i) => {
+    console.log(tasks.length);
+    for (let i = tasks.length - 1; i >= 0; i--) {
+        let t = tasks[i];
         // Early return if filtered out
-        if (task_filter > 0 && t.category != task_filter) return;
+        if (task_filter > 0 && t.category != task_filter) continue;
 
         const total_time = t.active
             ? (t.duration || 0) + (Date.now() - t.start)
@@ -218,7 +221,7 @@ function render_tasks() {
 
         task_div.appendChild(notes_div);
         task_list.appendChild(task_div);
-    });
+    }
 }
 
 function add_task() {
@@ -226,7 +229,7 @@ function add_task() {
     if (!task_name) return;
     const id = make_id();
     const category = document.querySelector("input[name=task-category]:checked").value;
-    tasks.unshift({
+    tasks.push({
         id,
         name: task_name,
         category,
@@ -239,6 +242,8 @@ function add_task() {
     });
     task_name_input.value = "";
     save_tasks();
+    // Auto-start if requested
+    if (auto_start_cb.checked) start_task(tasks.length - 1);
 }
 
 function delete_task(task_idx) {
@@ -350,6 +355,7 @@ function generate_summary() {
             ? (t.duration || 0) + (Date.now() - t.start)
             : (t.duration || 0);
         const notes = t.notes ? `\n${t.notes}` : "";
+        // text += task_filter == 0 ? `[${get_readable_category_name_from_id(t.category)}] ` : "";
         text += `${t.name}`;
         text += `${notes}\n\n`;
         text += `Time: ${fmt_summary_duration(dur, round_to_min)}\n--\n\n`;
@@ -415,6 +421,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // auto_start_cb.addEventListener("change", e => {
+    //     addBtn.textContent = e.target.checked ? "Add Task & Start Timer" : "Add Task";
+    // });
+
     // Debounced note editing
     const save_tasks_debounced = debounce(save_tasks, 400);
     task_list.addEventListener("input", e => {
@@ -430,7 +440,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Making sure that pasting doesn't bring formatting with it
     task_list.addEventListener("paste", e => {
         if (e.target.matches(".task-notes-editable")) {
-            console.log("hello?!")
             e.preventDefault();
             // Always extract plain text (no formatting)
             const text = (e.clipboardData || window.clipboardData).getData("text/plain");
