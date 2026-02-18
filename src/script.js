@@ -1,5 +1,5 @@
 // Settings
-let round_to_min = 10;
+let round_to_min = 5;
 // Globals
 const APP_VERSION = "__COMMIT_HASH__";
 const THEME_KEY = "tickitTheme";
@@ -8,8 +8,8 @@ const TASK_CATEGORIES = {
     UNIVERSAL: 1,
     NETFLIX: 2,
     PARAMOUNT: 3,
-    SONY: 4,
-    WB: 5,
+    WB: 4,
+    DISNEY: 5,
     OTHER: 255
 };
 
@@ -38,7 +38,7 @@ function debounce(fn, delay) {
     return (...args) => {
         clearTimeout(t);
         t = setTimeout(() => fn(...args), delay);
-    };
+    };    
 }
 
 function load_theme() {
